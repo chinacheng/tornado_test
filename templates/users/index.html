@@ -14,6 +14,7 @@
           <span>{{user['name']}}</span>
           <span>{{user['age']}}</span>
           <a href="/users?method=edit&id={{user['id']}}">修改</a>
+          <a href="/users?method=delete&id={{user['id']}}">删除</a>
         </li>
       {% end %}
     </ul>   

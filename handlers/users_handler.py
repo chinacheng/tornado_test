@@ -2,12 +2,13 @@
 #coding:utf-8
 
 import MySQLdb
+import database_conf
 from base_handler import  BaseHandler
 
 class UsersHandler(BaseHandler):
 
     def index(self):
-        con = MySQLdb.connect(host="localhost",user="root",passwd="",db="tornado_test",charset="utf8")
+        con = MySQLdb.connect(**database_conf.mysql)
         cursor = con.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute("select * from user")
         users = cursor.fetchall()
@@ -19,7 +20,7 @@ class UsersHandler(BaseHandler):
         print self.request
         name = self.get_argument('name',None)
         age = self.get_argument('age',None)
-        con = MySQLdb.connect(host="localhost",user="root",passwd="",db="tornado_test",charset="utf8")
+        con = MySQLdb.connect(**database_conf.mysql)
         cursor = con.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute("insert into user (name,age) values ('%s',%s)" % (name,age) )
         cursor.execute("commit")
@@ -32,7 +33,7 @@ class UsersHandler(BaseHandler):
 
     def edit(self):
         user_id = self.get_argument('id')
-        con = MySQLdb.connect(host="localhost",user="root",passwd="",db="tornado_test",charset="utf8")
+        con = MySQLdb.connect(**database_conf.mysql)
         cursor = con.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute("select * from user where id=%s " % user_id)
         user = cursor.fetchone()
@@ -42,7 +43,7 @@ class UsersHandler(BaseHandler):
 
     def put(self):
         user_id,name,age = self.get_argument('id'), self.get_argument('name'), self.get_argument('age')
-        con = MySQLdb.connect(host="localhost",user="root",passwd="",db="tornado_test",charset="utf8")
+        con = MySQLdb.connect(**database_conf.mysql)
         cursor = con.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute("update user set name='%s', age=%s where id=%s" % (name,age,user_id))
         cursor.execute("commit")
@@ -51,5 +52,12 @@ class UsersHandler(BaseHandler):
         self.redirect('/users')     
 
     def delete(self):
-        self.render('users/new.html')
+        user_id = self.get_argument('id')
+        con = MySQLdb.connect(**database_conf.mysql)
+        cursor = con.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("delete from user where id=%s" % (user_id))
+        cursor.execute("commit")
+        cursor.close()
+        con.close()
+        self.redirect("/users")
 

@@ -17,3 +17,13 @@ class BaseHandler(tornado.web.RequestHandler):
         else:
             return self.index()
 
+    def post(self):
+        method = self.get_argument("method",None)
+        if method == "put":
+            return self.put()
+        else:
+            pass
+
+    def put(self):
+        pass
+
